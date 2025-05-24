@@ -8,8 +8,8 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: create # JPA? ?? Entity? ????? ??? ?? ?? -> ?? ? ??
-    show-sql: true  # SQL ?? ?? ??? -> ?? ? ??
+      ddl-auto: create # JPA를 통해 Entity에 작성한대로 테이블 자동 생성 -> 배포 시 변경
+    show-sql: true  # SQL 쿼리 로깅 활성화 -> 배포 시 변경
     properties:
       hibernate:
         format_sql: true
@@ -18,3 +18,8 @@ spring:
 logging:
   level:
     root: info
+
+external:
+  welfare-api:
+    url: ${WELFARE_API_BASE_URL}
+    key: ${WELFARE_API_ENCODING_KEY}

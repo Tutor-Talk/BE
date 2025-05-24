@@ -12,12 +12,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.tutortalk.be.global.util.CustomUserDetailsService;
 
 @Configuration // 설정 클래스
 @EnableWebSecurity // Spring Security 활성화
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomUserDetailsService userDetailsService;
 
     /*
      * 사용자 비밀번호를 안전하게 암호화하기 위하여
@@ -48,6 +50,7 @@ public class SecurityConfig {
                                 .anyRequest().authenticated() // 나머지 요청은 인증 필요
                         //.anyRequest().permitAll() 모든 요청 허용
                 )
+                .userDetailsService(userDetailsService)
                 .formLogin(login -> login.disable()) // 로그인 폼 비활성화 (나중에 지워줘야 할 코드)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
