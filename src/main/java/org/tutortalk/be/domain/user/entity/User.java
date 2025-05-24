@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.Period;
 
 @Entity
 @Getter
@@ -32,6 +33,13 @@ public class User {
 
     @Column(nullable = false)
     private LocalDate birthDate; // 생년월일
+
+    /** 현재 만 나이 계산 */
+    @Transient
+    public int getAge() {
+        return Period.between(birthDate, LocalDate.now()).getYears();
+    }
+
     @Builder
     public User(String lastName, String firstName, String email, String password, LocalDate birthDate) {
         this.lastName = lastName;
