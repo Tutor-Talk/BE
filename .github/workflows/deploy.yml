@@ -1,0 +1,36 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main  # main 브랜치에 push 될 때마다 실행
+
+jobs:
+  deploy:
+    name: Deploy on EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.EC2_KEY }}
+
+      - name: Add EC2 to known_hosts
+        run: |
+          ssh-keyscan -p ${{ secrets.EC2_PORT }} -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Copy project to EC2
+        run: |
+          scp -P ${{ secrets.EC2_PORT }} -r ./ ${{ secrets.EC2_HOST }}:~/app
+
+      - name: Deploy on EC2 via SSH
+        run: |
+          ssh -p ${{ secrets.EC2_PORT }} ${{ secrets.EC2_HOST }} << 'EOF'
+            cd ~/app
+            docker compose down
+            docker compose up --build -d
+          EOF
