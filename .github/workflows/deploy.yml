@@ -24,6 +24,10 @@ jobs:
       - name: Sync project to EC2
         run: rsync -avz --exclude='.git' ./ ${{ secrets.EC2_HOST }}:~/app
 
+      - name: Upload .env to EC2
+        run: |
+          ssh ${{ secrets.EC2_HOST }} "echo '${{ secrets.ENV_FILE }}' > ~/app/.env"
+
       - name: Deploy on EC2
         run: |
           ssh ${{ secrets.EC2_HOST }} << 'EOF'
