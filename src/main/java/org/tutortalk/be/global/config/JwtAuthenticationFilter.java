@@ -9,6 +9,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.tutortalk.be.global.util.CustomUserDetailsService;
+import org.tutortalk.be.global.util.UserPrincipal;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,6 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * */
 
     private final JwtProvider jwtProvider;
+    private final CustomUserDetailsService userDetailsService;
 
     /*
      * 이 필터는 모든 HTTP 요청마다 실행된다.
@@ -51,11 +54,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 2. 토큰이 존재하고 유효성 검사를 통과하면
         if(token != null && jwtProvider.validateToken(token)){
             // 3. 토큰에서 사용자 정보 추출
-            String username = jwtProvider.getUsername(token);
+            String username = jwtProvider.getUsername(token); // 이메일
+
+            UserPrincipal principal =
+                    (UserPrincipal) userDetailsService.loadUserByUsername(username);
 
             // 4. 인증 객체 생성 (사용자 이름, 인증 정보 null, 권한 정보 없음)
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                    username, // 인증된 사용자 정보 (username 또는 userDetails 객체)
+                    principal, // 인증된 사용자 정보
                     null, // 비밀번호 또는 인증 정보 (JWT 사용 시 비밀번호가 필요 없으므로 null 로 둔다)
                     List.of() // 사용자의 권한 목록
             );
