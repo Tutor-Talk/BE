@@ -27,13 +27,10 @@ public class AuthServiceImpl implements AuthService {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
-        if (!request.password().equals(request.passwordConfirm())) {
-            throw new IllegalArgumentException("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
-        }
+
 
         User user = User.builder()
-                .lastName(request.lastName())
-                .firstName(request.firstName())
+                .name(request.name())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .birthDate(request.birthDate())

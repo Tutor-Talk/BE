@@ -20,10 +20,7 @@ public class User {
     private Long id;
 
     @Column(nullable = false)
-    private String lastName; // 성
-
-    @Column(nullable = false)
-    private String firstName; // 이름
+    private String name; // 이름
 
     @Column(nullable = false, unique = true)
     private String email; // 이메일(로그인 ID)
@@ -34,6 +31,12 @@ public class User {
     @Column(nullable = false)
     private LocalDate birthDate; // 생년월일
 
+    @Column(nullable = false)
+    private String phone; // 전화번호
+
+    @Column(nullable = false)
+    private String region; //지역
+
     /** 현재 만 나이 계산 */
     @Transient
     public int getAge() {
@@ -41,11 +44,12 @@ public class User {
     }
 
     @Builder
-    public User(String lastName, String firstName, String email, String password, LocalDate birthDate) {
-        this.lastName = lastName;
-        this.firstName = firstName;
+    public User(String name, String email, String password, LocalDate birthDate, String phone, String region) {
+        this.name = name;
         this.email = email;
         this.password = password;
         this.birthDate = birthDate;
+        this.phone = phone;
+        this.region = region;
     }
 }
