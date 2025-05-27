@@ -18,7 +18,15 @@ public class ContentController {
     public ResponseEntity<?> getContentUrl(@RequestBody Map<String, String> request) {
         String key = request.get("key");
         return contentService.findContentByKey(key)
-                .map(content -> ResponseEntity.ok(Map.of("url", content.getUrl())))
+                .map(content -> {
+                    String url = content.getUrl();
+                    if (contentService.isUrlValidInS3(url)) {
+                        return ResponseEntity.ok(Map.of("url", url));
+                    } else {
+                        return ResponseEntity.ok(Map.of("url", "유효하지 않은 url"));
+                    }
+                })
                 .orElse(ResponseEntity.notFound().build());
     }
+
 }

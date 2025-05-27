@@ -40,3 +40,9 @@ external:
   welfare-api:
     url: ${WELFARE_API_BASE_URL}
     key: ${WELFARE_API_ENCODING_KEY}
+
+cloud:
+  aws:
+    s3:
+      bucket: ${AWS_BUCKET_NAME}
+
