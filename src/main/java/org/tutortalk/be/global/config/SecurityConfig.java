@@ -51,17 +51,24 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // JWT는 CSRF 필요 없으므로 꺼주기
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
-                                .requestMatchers("/","/oauth2/**").permitAll()
-                                .anyRequest().authenticated() // 나머지 요청은 인증 필요
+                        .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
+                        .requestMatchers("/", "/oauth2/**", "/api/contents/**").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .formLogin(form -> form.disable()) // 로그인 폼 비활성화 (나중에 지워줘야 할 코드)
                 .userDetailsService(userDetailsService)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth2 -> oauth2
-                        .successHandler(googleOAuth2SuccessHandler) // oauth로그인이 성공했을 경우 실행할 클래스
+                        .successHandler(googleOAuth2SuccessHandler)
                 )
                 .build();
+
+                /*
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .build();
+
+                 */
     }
 
     @Bean
