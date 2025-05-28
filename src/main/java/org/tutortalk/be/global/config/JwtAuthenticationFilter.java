@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     /*
      * JwtAuthenticationFilter는 HTTP 요청에서 JWT토큰을 추출하고 이를 통해 인증된 사용자임을 Spring Security에 알려주는 역할
@@ -50,11 +52,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         // 1. 요청 헤더에서 토큰을 추출함
         String token = resolveToken(request);
+        log.info("[JwtFilter] Authorization Header: {}", request.getHeader("Authorization"));
+        log.info("[JwtFilter] Extracted token: {}", token);
 
         // 2. 토큰이 존재하고 유효성 검사를 통과하면
         if(token != null && jwtProvider.validateToken(token)){
             // 3. 토큰에서 사용자 정보 추출
             String username = jwtProvider.getUsername(token); // 이메일
+            log.info("[JwtFilter] Token valid. Username(email): {}", username);
 
             UserPrincipal principal =
                     (UserPrincipal) userDetailsService.loadUserByUsername(username);
@@ -86,5 +91,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         return null;
     }
+
+    /*@Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return path.startsWith("/api/auth") || path.startsWith("/oauth2");
+    }*/
 
 }
