@@ -23,10 +23,9 @@ public class User {
     private String name; // 이름
 
     @Column(nullable = false, unique = true)
-    private String email; // 이메일(로그인 ID)
+    private String email; // 이메일(로그인 ID), 구글/일반 공용
 
-    @Column(nullable = false)
-    private String password;
+    private String password; // 일반 회원가입 시 이용, 구글 가입 시 null
 
     @Column(nullable = false)
     private LocalDate birthDate; // 생년월일
@@ -37,19 +36,44 @@ public class User {
     @Column(nullable = false)
     private String region; //지역
 
+    private String googleId; // 구글 식별자 코드
+
+    private String profileImage; // 구글 프로필 사진
+
+    private boolean isProfileComplete = false;
+
     /** 현재 만 나이 계산 */
     @Transient
     public int getAge() {
         return Period.between(birthDate, LocalDate.now()).getYears();
     }
 
+    // 구글 로그인 사용자인지 확인
+    public boolean isGoogleUser(){
+        return googleId != null;
+    }
+
+    public void setIsProfileComplete(boolean isProfileComplete) {
+        this.isProfileComplete = isProfileComplete;
+    }
+
+    public void updateProfile(String name, String phone, String region, LocalDate birthDate) {
+        if (name != null) this.name = name;
+        if (phone != null) this.phone = phone;
+        if (region != null) this.region = region;
+        if (birthDate != null) this.birthDate = birthDate;
+        this.isProfileComplete = true;
+    }
+
     @Builder
-    public User(String name, String email, String password, LocalDate birthDate, String phone, String region) {
+    public User(String name, String email, String password, LocalDate birthDate, String phone, String region, String googleId, String profileImage) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.birthDate = birthDate;
         this.phone = phone;
         this.region = region;
+        this.googleId = googleId;
+        this.profileImage = profileImage;
     }
 }

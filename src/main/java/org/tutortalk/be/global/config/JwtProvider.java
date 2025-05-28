@@ -4,6 +4,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +12,7 @@ import java.util.Date;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtProvider {
     /*
      * JwtProvider는 JWT토큰을 생성, 검증, 필요한 정보를 추출하는 클래스이다.
@@ -35,12 +37,13 @@ public class JwtProvider {
      * @param username 사용자 이름 또는 식별자
      * @return 서명된 JWT 문자열
      * */
-    public String generateToken(String username){
+    public String generateToken(String username, boolean isProfileComplete){
         Date now = new Date(); // 현재 시간
         Date expiry = new Date(now.getTime() + expiration); // 만료 시간
 
         return Jwts.builder()
                 .setSubject(username) // 토큰의 주체(보통 사용자 식별자)
+                .claim("profileComplete", String.valueOf(isProfileComplete)) // 프론트에서 토큰을 파싱해서 isProfilecomplete값 확인
 //                .claim("role", role) 사용자 권한에 따라 요청을 제안하고 싶은 경우
                 .setIssuedAt(now) // 발급 시간
                 .setExpiration(expiry) // 만료 시간
@@ -72,8 +75,10 @@ public class JwtProvider {
             Jwts.parser()
                     .setSigningKey(secretKey)
                     .parseClaimsJws(token);
+            log.info("[JwtProvider] 토큰 유효성 검사 통과");
             return true;
         }catch(JwtException e){
+            log.warn("[JwtProvider] 토큰 유효성 검사 실패: {}", e.getMessage());
             return false;
         }
     }

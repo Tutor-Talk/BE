@@ -1,5 +1,6 @@
 package org.tutortalk.be.domain.user.service;
 
+import org.tutortalk.be.domain.user.dto.AdditionalInfoRequest;
 import org.tutortalk.be.domain.user.dto.LoginRequest;
 import org.tutortalk.be.domain.user.dto.LoginResponse;
 import org.tutortalk.be.domain.user.dto.SignupRequest;
@@ -15,4 +16,6 @@ public interface AuthService {
      * @return 발급된 JWT 토큰
      * */
     LoginResponse login(LoginRequest request);
+
+    void updateAdditionalInfo(Long userId, AdditionalInfoRequest dto);
 }

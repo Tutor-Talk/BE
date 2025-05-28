@@ -1,10 +1,12 @@
 package org.tutortalk.be.domain.user.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.tutortalk.be.domain.user.dto.AdditionalInfoRequest;
 import org.tutortalk.be.domain.user.dto.LoginRequest;
 import org.tutortalk.be.domain.user.dto.LoginResponse;
 import org.tutortalk.be.domain.user.dto.SignupRequest;
@@ -15,6 +17,7 @@ import org.tutortalk.be.global.config.JwtProvider;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -27,15 +30,18 @@ public class AuthServiceImpl implements AuthService {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
-
-
         User user = User.builder()
                 .name(request.name())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .birthDate(request.birthDate())
+                .phone(request.phone())
+                .region(request.region())
+                .googleId(null)
+                .profileImage(null)
                 .build();
 
+        user.setIsProfileComplete(true);
         userRepository.save(user);
     }
 
@@ -56,7 +62,24 @@ public class AuthServiceImpl implements AuthService {
         }
 
         //인증 성공 시 JWT토큰 생성
-        String token = jwtProvider.generateToken(request.email());
+        String token = jwtProvider.generateToken(request.email(),user.isProfileComplete());
         return new LoginResponse(token);
+    }
+
+    @Override
+    public void updateAdditionalInfo(Long userId, AdditionalInfoRequest dto) {
+        log.info("[Service] updateAdditionalInfo 호출됨. userId: {}", userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자 없음"));
+
+        user.updateProfile(
+                dto.name(),
+                dto.phone(),
+                dto.region(),
+                dto.birthDate()
+        );
+
+        userRepository.save(user);
+        log.info("[Service] 사용자 정보 업데이트 완료. userId: {}", userId);
     }
 }
