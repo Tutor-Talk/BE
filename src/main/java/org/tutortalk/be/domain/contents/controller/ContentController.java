@@ -3,7 +3,6 @@ package org.tutortalk.be.domain.contents.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.tutortalk.be.domain.contents.entity.Content;
 import org.tutortalk.be.domain.contents.service.ContentService;
 
 import java.util.Map;

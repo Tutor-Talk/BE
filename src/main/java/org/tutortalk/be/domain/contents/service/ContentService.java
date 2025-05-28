@@ -8,7 +8,6 @@ import org.tutortalk.be.domain.contents.repository.ContentRepository;
 import org.springframework.beans.factory.annotation.Value;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
-import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.net.URI;
