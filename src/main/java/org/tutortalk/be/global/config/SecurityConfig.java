@@ -27,6 +27,18 @@ public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
     private final GoogleOAuth2SuccessHandler googleOAuth2SuccessHandler;
 
+    @Value("${DEV_PUBLIC_DNS}")
+    private String devPublicDns;
+
+    @Value("${DEV_PUBLIC_IP}")
+    private String devPublicIp;
+
+    @Value("${PROD_PUBLIC_DNS}")
+    private String prodPublicDns;
+
+    @Value("${PROD_PUBLIC_IP}")
+    private String prodPublicIp;
+
     /*
      * 사용자 비밀번호를 안전하게 암호화하기 위하여
      * */
@@ -78,7 +90,7 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000","http://127.0.0.1:5500", "http://localhost:5500", redirectUri)
+                        .allowedOrigins("http://localhost:3000","http://127.0.0.1:5500", "http://localhost:5500", redirectUri, devPublicDns,devPublicIp, prodPublicDns, prodPublicIp)
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                         .allowedHeaders("*")
                         .allowCredentials(true); // 인증정보 (쿠키, 인증 헤더) 허용
