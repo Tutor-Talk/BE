@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
-                        .requestMatchers("/", "/oauth2/**", "/api/contents/**").permitAll()
+                        .requestMatchers("/", "/oauth2/**", "/api/contents/**","/login/oauth2/code/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form.disable()) // 로그인 폼 비활성화 (나중에 지워줘야 할 코드)
