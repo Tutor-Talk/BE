@@ -1,6 +1,7 @@
 package org.tutortalk.be.global.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -72,12 +73,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    public WebMvcConfigurer corsConfigurer() {
+    public WebMvcConfigurer corsConfigurer(@Value("${REDIRECT_URI}") String redirectUri) {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000","http://127.0.0.1:5500", "http://localhost:5500")
+                        .allowedOrigins("http://localhost:3000","http://127.0.0.1:5500", "http://localhost:5500", redirectUri)
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                         .allowedHeaders("*")
                         .allowCredentials(true); // 인증정보 (쿠키, 인증 헤더) 허용
