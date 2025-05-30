@@ -49,26 +49,33 @@ public class GoogleOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         });
 
         Boolean isProfileComplete = user.isProfileComplete();
-
-
         String token = jwtProvider.generateToken(user.getEmail(),isProfileComplete);
         /*
         방법 1. 프론트와 연결 후 리다이렉트 방식으로 변경 프론트에서 토큰 추출 -> 프론트에서 replaceState()를 이용하여 URL에서 제거
-        response.sendRedirect("http://localhost:3000/oauth-success?token=" + token + "&isProfileComplete=" + isProfileComplete);
-        /*
-        * 방법 2. 프론트와 연결 후 리다이렉트 방식을 이용하지만 토큰을 Set-Cookie 헤더로 전달
-        * Cookie cookie = new Cookie("token", token);
-          cookie.setHttpOnly(true);
-          cookie.setPath("/");
-          cookie.setSecure(true); // HTTPS 환경일 때
-          response.addCookie(cookie);
-          response.sendRedirect("http://localhost:3000/oauth2/success");
-        * */
+        */
+        response.sendRedirect("http://localhost:3000/oauth-callback?token=" + token + "&isProfileComplete=" + isProfileComplete);
+
+        //방법 2. 프론트와 연결 후 리다이렉트 방식을 이용하지만 토큰을 Set-Cookie 헤더로 전달
+        /*Cookie cookie = new Cookie("token", token);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setSecure(true); // HTTPS 환경일 때
+
+        Cookie profileCookie = new Cookie("isProfileComplete", isProfileComplete.toString());
+        profileCookie.setHttpOnly(false); // 프론트에서 읽어야 하므로 false
+        profileCookie.setPath("/");
+        profileCookie.setSecure(true); // HTTPS 환경에서는 true
+
+        response.addCookie(cookie);
+        response.addCookie(profileCookie);
+
+        response.sendRedirect("http://localhost:3000/oauth2/success");*/
+
 
         // json으로 응답 프론트에서 토큰을 꺼내어서 localStorage에 저장
-        response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().write("{\"token\": \"" + token + "\"}");
-        response.getWriter().flush();
+        /*response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write("{\"token\": \"" + token + "\", \"isProfileComplete\": " + isProfileComplete + "}");
+        response.getWriter().flush();*/
 
         log.info("✅ [구글 로그인] JWT 발급 완료 - 토큰 값: {}", token);
     }
