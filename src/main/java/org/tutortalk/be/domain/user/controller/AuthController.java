@@ -14,6 +14,8 @@ import org.tutortalk.be.domain.user.service.AuthService;
 import org.tutortalk.be.global.util.UserPrincipal;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,9 +25,22 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<Void> signup(@Validated @RequestBody SignupRequest request){
-        authService.signup(request);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Map<String, Object>> signup(@Validated @RequestBody SignupRequest request){
+        try {
+            authService.signup(request);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", 200);
+            response.put("message", "회원가입이 성공적으로 완료되었습니다.");
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("status", 400);
+            errorResponse.put("message", e.getMessage() != null ? e.getMessage() : "회원가입 중 오류가 발생했습니다.");
+
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
     }
 
     @PostMapping("/login")
