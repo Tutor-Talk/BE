@@ -22,7 +22,7 @@ public class User {
     @Column(nullable = false)
     private String name; // 이름
 
-    private String email; // 이메일(로그인 ID), 구글/일반 공용
+    private String email; // 이메일(로그인 ID), 구글/일반 공용, 구글 로그인 시 추가 정보를 받기 위해 일시적으로 허용 추후에 수정해야 함
 
     private String password; // 일반 회원가입 시 이용, 구글 가입 시 null
 
